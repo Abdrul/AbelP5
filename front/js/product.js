@@ -87,18 +87,24 @@ function addToCart () {
         const tab = JSON.parse(localStorage.getItem('cart')) || []
         console.log(tab);
         const index = tab.findIndex(element => element.idProduct === cart.idProduct && element.color === cart.color)
-        if(index === -1) {
-            tab.push(cart)
-            alert("produit ajouté")
+        if(quantity.value > 0 && quantity.value <100 && select.value !== "") { 
+            if(index === -1) {
+                tab.push(cart)
+                alert("produit ajouté")
+            } else {
+                // tab[index].quantity = tab[index].quantity + cart.quantity;
+                tab[index].quantity += cart.quantity
+                alert("quantité augmentée")
+            }
+
         } else {
-            // tab[index].quantity = tab[index].quantity + cart.quantity;
-            tab[index].quantity += cart.quantity
-            alert("quantité augmentée")
+            console.log(false);
         }
         
-
         console.log(index);
-    
+
+        
+        
         localStorage.setItem('cart', JSON.stringify(tab))
     
     
@@ -107,4 +113,6 @@ function addToCart () {
 
 addToCart()
 
-
+// Si quantité > 0
+// Si quantité <=100
+// Si couleur !== ""

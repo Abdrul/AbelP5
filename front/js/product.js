@@ -19,8 +19,6 @@ const getProduct = () => {
     .catch(error => {
         return [];
     });
-
-
 }
 
 
@@ -40,8 +38,8 @@ const renderProductToHtml = (product) => {
 
     itemImg.innerHTML =  `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
     
-    product.colors.forEach(element => {
-        select.innerHTML +=`<option value="${element}">${element}</option>`  
+    product.colors.forEach(color => {
+        select.innerHTML +=`<option value="${color}">${color}</option>`  
     })
     // select.innerHTML += product.colors.map(color => `<option value="${color}">${color}</option>`).join();
 
@@ -82,11 +80,11 @@ function addToCart () {
         let cart = {
             color : select.value,
             quantity : parseInt(quantity.value),
-            idProduct : id
+            id : id
         }
         const tab = JSON.parse(localStorage.getItem('cart')) || []
         console.log(tab);
-        const index = tab.findIndex(element => element.idProduct === cart.idProduct && element.color === cart.color)
+        const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
         if(quantity.value > 0 && quantity.value <100 && select.value !== "") { 
             if(index === -1) {
                 tab.push(cart)

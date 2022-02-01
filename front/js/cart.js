@@ -7,9 +7,12 @@
 // une fonction qui va calculer le prix total et une autre la quantité
 
 
-// let params = new URL(document.location).searchParams;
-// let id = params.get('id') 
-const cardItems = document.getElementById('cart__items')
+
+const cardItems = document.getElementById('cart__items');
+const totalQuantity = document.getElementById('totalQuantity');
+const totalPrice = document.getElementById('totalPrice');
+
+
 
 function getProducts () {
 
@@ -18,26 +21,18 @@ function getProducts () {
     .then(reponse => reponse.json())
 
     .then((products) => {
-        // for (let i = 0; i < products.length; i++) {
-        //     console.log(products[i]);
-        // }
 
-        // products.forEach(product => console.log(Object.values(product).find(element => element.idProduct === product._id)))
-        // console.log();
-
-        // getCard()
         const tab = JSON.parse(localStorage.getItem('cart'))
-        tab.forEach(produit => {
-            let match = Object.values(products).find(element => element._id === produit.id);
-            console.log(match)
-            getCard(match, produit)
+        tab.forEach(product => {
+            let match = Object.values(products).find(element => element._id === product.id)
+            // console.log(match)
+            getCard(match, product)
         })
     })
     
     .catch(error => {
         [];
     });
-    
 }
 
 getProducts()   
@@ -52,7 +47,7 @@ function getCard(match, tab) {
     // localStorage.setItem('cart', JSON.stringify(tab))
 
     cardItems.innerHTML += 
-        `<article class="cart__item" data-id="${match.id}" data-color="${tab.color}">
+        `<article class="cart__item" data-id="${tab.id}" data-color="${tab.color}">
         <div class="cart__item__img">
             <img src="${match.imageUrl}" alt="${match.altTxt}">
         </div>
@@ -60,7 +55,7 @@ function getCard(match, tab) {
             <div class="cart__item__content__description">
                 <h2>${match.name}</h2>
                 <p>${tab.color}</p>
-                <p>${match.price}</p>
+                <p>${match.price} €</p>
         </div>
         <div class="cart__item__content__settings">
             <div class="cart__item__content__settings__quantity">
@@ -74,7 +69,43 @@ function getCard(match, tab) {
         </div>
     </article>`
 
+    const cartItem = document.querySelector('.cart__item')
+    console.log(cartItem);
+    const deleteItem = document.querySelectorAll('.deleteItem')
+    console.log(deleteItem);
+    
+    // deleteItem.addEventListener("click", () => {
+    //     console.log("salut");
+    // })
+
+
+
+
+    deleteItem.forEach(button => {
+        button.addEventListener("click", () => {
+            button.closest('.cart__item').remove()
+
+            // console.log("salut");
+            // console.log(cartItem.dataset.color);
+        
+            let cart = {
+                color : cartItem.dataset.color,
+                id : cartItem.dataset.id
+            }
+
+            const tab = JSON.parse(localStorage.getItem('cart')) || []
+            console.log(tab);
+            const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
+            if(index !== -1) {
+                tab.splice(index, 1)
+                
+            }
+    
+        localStorage.setItem('cart', JSON.stringify(tab))
+
+        })
+    })
+
+
 }
-
-
 

@@ -69,10 +69,10 @@ function getCard(match, tab) {
         </div>
     </article>`
 
-    const cartItem = document.querySelector('.cart__item')
+    const cartItem = document.querySelectorAll('.cart__item')
     console.log(cartItem);
     const deleteItem = document.querySelectorAll('.deleteItem')
-    console.log(deleteItem);
+    // console.log(deleteItem);
     
     // deleteItem.addEventListener("click", () => {
     //     console.log("salut");
@@ -83,28 +83,34 @@ function getCard(match, tab) {
 
     deleteItem.forEach(button => {
         button.addEventListener("click", () => {
-            button.closest('.cart__item').remove()
+            // button.closest('.cart__item').remove()
 
             // console.log("salut");
             // console.log(cartItem.dataset.color);
-        
-            let cart = {
-                color : cartItem.dataset.color,
-                id : cartItem.dataset.id
-            }
+            // let cart = {
+            //     color : cartItem.NodeList.dataset.color,
+            //     id : cartItem.dataset.id
+            // }
+            // console.log(cart);
 
-            const tab = JSON.parse(localStorage.getItem('cart')) || []
-            console.log(tab);
-            const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
-            if(index !== -1) {
-                tab.splice(index, 1)
+            cartItem.forEach(carti => {
+                console.log(carti.dataset.color);
+                console.log(carti.dataset.id);
+            })
+            
+        //     const tab = JSON.parse(localStorage.getItem('cart')) || []
+        //     console.log(tab);
+        //     const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
+        //     if(index !== -1) {
+        //         tab.splice(index, 1)
                 
-            }
+        //     }
     
-        localStorage.setItem('cart', JSON.stringify(tab))
+        // localStorage.setItem('cart', JSON.stringify(tab))
 
         })
     })
+
 
 
 }

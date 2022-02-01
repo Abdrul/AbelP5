@@ -88,11 +88,9 @@ function addToCart () {
         if(quantity.value > 0 && quantity.value <100 && select.value !== "") { 
             if(index === -1) {
                 tab.push(cart)
-                alert("produit ajouté")
             } else {
                 // tab[index].quantity = tab[index].quantity + cart.quantity;
                 tab[index].quantity += cart.quantity
-                alert("quantité augmentée")
             }
 
         } else {

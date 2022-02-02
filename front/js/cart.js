@@ -25,9 +25,10 @@ function getProducts () {
         const tab = JSON.parse(localStorage.getItem('cart'))
         tab.forEach(product => {
             let match = Object.values(products).find(element => element._id === product.id)
-            // console.log(match)
             getCard(match, product)
+
         })
+        totalCost(tab,products)
     })
     
     .catch(error => {
@@ -69,48 +70,42 @@ function getCard(match, tab) {
         </div>
     </article>`
 
-    const cartItem = document.querySelectorAll('.cart__item')
-    console.log(cartItem);
+
     const deleteItem = document.querySelectorAll('.deleteItem')
     // console.log(deleteItem);
-    
-    // deleteItem.addEventListener("click", () => {
-    //     console.log("salut");
-    // })
-
-
-
-
     deleteItem.forEach(button => {
-        button.addEventListener("click", () => {
-            // button.closest('.cart__item').remove()
+        button.addEventListener("click", (e) => {
+            button.closest('.cart__item').remove()
+            // console.log(e.target.closest(".cart__item").dataset.id);
 
-            // console.log("salut");
-            // console.log(cartItem.dataset.color);
-            // let cart = {
-            //     color : cartItem.NodeList.dataset.color,
-            //     id : cartItem.dataset.id
-            // }
-            // console.log(cart);
+            let cartProduct = {
+                id : e.target.closest(".cart__item").dataset.id,
+                color : e.target.closest(".cart__item").dataset.color
 
-            cartItem.forEach(carti => {
-                console.log(carti.dataset.color);
-                console.log(carti.dataset.id);
-            })
-            
-        //     const tab = JSON.parse(localStorage.getItem('cart')) || []
-        //     console.log(tab);
-        //     const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
-        //     if(index !== -1) {
-        //         tab.splice(index, 1)
-                
-        //     }
+            }
+            // console.log(cartProduct);
+
+            const tab = JSON.parse(localStorage.getItem('cart')) || []
+            console.log(tab);
+            const index = tab.findIndex(element => element.id === cartProduct.id && element.color === cartProduct.color)
+            if(index !== -1) {
+                tab.splice(index, 1)
+            }
     
-        // localStorage.setItem('cart', JSON.stringify(tab))
+            localStorage.setItem('cart', JSON.stringify(tab))
+
 
         })
     })
 
+    
+}
+
+
+function totalCost (tab, products) {
+
+
+    console.log(tab, products);
 
 
 }

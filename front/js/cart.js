@@ -9,10 +9,7 @@
 
 
 const cardItems = document.getElementById('cart__items');
-const totalQuantity = document.getElementById('totalQuantity');
 const totalPrice = document.getElementById('totalPrice');
-
-
 
 function getProducts () {
 
@@ -26,9 +23,9 @@ function getProducts () {
         tab.forEach(product => {
             let match = Object.values(products).find(element => element._id === product.id)
             getCard(match, product)
+            // totalCost(tab,match)
 
         })
-        totalCost(tab,products)
     })
     
     .catch(error => {
@@ -70,6 +67,40 @@ function getCard(match, tab) {
         </div>
     </article>`
 
+    const inputQuantity = document.querySelectorAll('.itemQuantity')
+    // console.log(inputQuantity);
+    // console.log(Array.from(inputQuantity));
+    inputQuantity.forEach(input => {
+        input.addEventListener('change', () => {
+
+            // const tab = JSON.parse(localStorage.getItem('cart')) || []
+            // console.log(tab);
+
+            let tabInput = Array.from(inputQuantity)
+            // console.log(tabInput);
+            const total = tabInput.reduce((total, currentValue) => {
+                // console.log(currentValue);
+                // const value = currentValue.value === "" ? 0 : parseInt(currentValue.value)
+                // console.log(currentValue.value);
+                return total += parseInt(currentValue.value)
+                
+            },0)
+            
+            const totalQuantity = document.getElementById('totalQuantity');
+            
+            totalQuantity.textContent = total
+            
+            const totalPrice = document.getElementById('totalPrice');
+            
+            
+            // localStorage.setItem('cart', JSON.stringify(total))
+            
+        })
+
+    })
+
+ 
+
 
     const deleteItem = document.querySelectorAll('.deleteItem')
     // console.log(deleteItem);
@@ -102,11 +133,15 @@ function getCard(match, tab) {
 }
 
 
-function totalCost (tab, products) {
+// function totalCost (tab,match) {
+
+//     // let tabPrice = []
+//     totalPrice.textContent = match.price 
+//     console.log();
+    
+// }
 
 
-    console.log(tab, products);
-
-
-}
-
+// const reducer = (accumulator, currentValue) => accumulator + currentValue;
+// const priceTotale = tabPrice.reduce(reducer, 0)
+// console.log(priceTotale);

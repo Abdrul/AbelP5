@@ -6,7 +6,7 @@
 
 // une fonction qui va calculer le prix total et une autre la quantité
 
-// supprimer du LS quand la quantite est a 0
+
 
 
 
@@ -82,7 +82,7 @@ function initQuantityListener () {
     // console.log(Array.from(inputQuantity));
     inputQuantity.forEach(input => {
         input.addEventListener('change', (e) => {
-
+            const itemSelect = e.target.closest(".cart__item")
 
             // const inputArray = Array.from(inputQuantity)
             // const total = inputArray.reduce((total, current) => {
@@ -92,25 +92,25 @@ function initQuantityListener () {
 
 
             let cartProduct = {
-                id : e.target.closest(".cart__item").dataset.id,
-                color : e.target.closest(".cart__item").dataset.color,
-                quantity : parseInt(e.target.closest(".itemQuantity").value)
+                id : itemSelect.dataset.id,
+                color : itemSelect.dataset.color,
+                quantity : +e.target.value 
+                // parseInt(e.target.closest(".itemQuantity").value)
             }
             // console.log(cartProduct);
             const tab = JSON.parse(localStorage.getItem('cart')) || []
             const index = tab.findIndex(element => element.id === cartProduct.id && element.color === cartProduct.color)
             if(index !== -1) {
                 tab[index].quantity = cartProduct.quantity
-                localStorage.setItem('cart', JSON.stringify(tab))
                 countQuantityProducts (tab)
 
                 if(tab[index].quantity < 1) {
 
+                    itemSelect.remove()
                     tab.splice(index, 1)
-                    localStorage.setItem('cart', JSON.stringify(tab))
-                
                 } 
-
+                
+                localStorage.setItem('cart', JSON.stringify(tab))
             } 
 
             

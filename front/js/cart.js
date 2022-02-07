@@ -29,13 +29,26 @@ function getProducts () {
             let match = Object.values(products).find(element => element._id === product.id)
             getCard(match, product)
             total += costProduct(match, product)
+            initQuantityListener (match, product)
+
         })
         totalItems = total
         console.log(totalItems);
-        totalPrice.innerText = totalItems
+        
         initQuantityListener ()
         deleteCards()
         countQuantityProducts (tab)
+        // function getTotal() {
+        //     const tab = JSON.parse(localStorage.getItem('cart'))
+        //     let total = 0
+        //     tab.forEach(product => {
+        //         let match = Object.values(products).find(element => element._id === product.id)
+        //         total += match.price * product.quantity
+        //     })
+        //     return total
+        // }
+        // getTotal()
+
     })
     
     .catch(error => {
@@ -87,7 +100,7 @@ getProducts()
 // displayProducts()
 
 
-function initQuantityListener () {
+function initQuantityListener (match, product) {
 
     const inputQuantity = document.querySelectorAll('.itemQuantity')
     // console.log(inputQuantity);
@@ -114,7 +127,8 @@ function initQuantityListener () {
             if(index !== -1) {
                 tab[index].quantity = cartProduct.quantity
                 countQuantityProducts (tab)
-                
+                totalPrice.innerText = match.price * tab[index].quantity
+
                 if(tab[index].quantity < 1) {
 
                     item.remove()
@@ -141,12 +155,15 @@ function countQuantityProducts (tab) {
 }
 
 function costProduct (match, product) {
-
+    
     
     return match.price * product.quantity
     
     
 }
+
+
+
 
 
 function deleteCards () {

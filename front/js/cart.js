@@ -15,64 +15,76 @@ const cardItems = document.getElementById('cart__items');
 const totalPrice = document.getElementById('totalPrice');
 const totalQuantity = document.getElementById('totalQuantity');
 
-// function getProducts () {
+function getProducts () {
 
-//     fetch(`http://localhost:3000/api/products`)
+    fetch(`http://localhost:3000/api/products`)
 
-//     .then(reponse => reponse.json())
+    .then(reponse => reponse.json())
 
-//     .then((products) => {
+    .then((products) => {
 
-//         const tab = JSON.parse(localStorage.getItem('cart'))
-//         tab.forEach(product => {
-//             let match = Object.values(products).find(element => element._id === product.id)
-//             getCard(match, product)
-//             totalCost(tab,match)
-//             initQuantityListener()
-//         })
-//     })
+        const tab = JSON.parse(localStorage.getItem('cart'))
+        let total = 0
+        tab.forEach(product => {
+            let match = Object.values(products).find(element => element._id === product.id)
+            getCard(match, product)
+            total += costProduct(match, product)
+        })
+        totalItems = total
+        console.log(totalItems);
+        totalPrice.innerText = totalItems
+        initQuantityListener ()
+        deleteCards()
+        countQuantityProducts (tab)
+    })
     
-//     .catch(error => {
-//         [];
-//     });
-// }
-// getProducts()   
-
-function getProduct (id) {
-
-    return fetch(`http://localhost:3000/api/products/${id}`)
-
-    .then((reponse) => {
-        return reponse.json()
-    })
-
-    .then((product) => {
-        return product;
-    })
-
     .catch(error => {
-        return [];
+        [];
     });
 }
+getProducts()   
+
+// function getProduct (id) {
+
+//     return fetch(`http://localhost:3000/api/products/${id}`)
+
+//     .then((reponse) => {
+//         return reponse.json()
+//     })
+
+//     .then((product) => {
+//         return product;
+//     })
+
+//     .catch(error => {
+//         return [];
+//     });
+// }
 
 
-async function displayProducts ()  {
+// async function displayProducts ()  {
 
 
-    const tab = JSON.parse(localStorage.getItem('cart'))
-    for(const product of tab) {
-        // console.log(product);
-        let match = await getProduct(product.id) 
-        getCard(match, product)
-        costProduct(match, product)
-    }
-    initQuantityListener ()
-    deleteCards()
-    countQuantityProducts (tab)
-} 
+//     const tab = JSON.parse(localStorage.getItem('cart'))
+//     let total = 0
+//     for(const product of tab) {
+//         // console.log(product);
+//         let match = await getProduct(product.id) 
+//         // console.log(match);
+//         getCard(match, product)
+//         total += costProduct(match, product)
+//         // console.log(total);
+//         // costProduct(match, product)
+//     }
+//     totalItems = total
+    
+//     console.log(totalItems);
+//     initQuantityListener ()
+//     deleteCards()
+//     countQuantityProducts (tab)
+// } 
 
-displayProducts()
-
+// displayProducts()
 
 
 function initQuantityListener () {
@@ -82,7 +94,7 @@ function initQuantityListener () {
     // console.log(Array.from(inputQuantity));
     inputQuantity.forEach(input => {
         input.addEventListener('change', (e) => {
-            const itemSelect = e.target.closest(".cart__item")
+            const item = e.target.closest(".cart__item")
 
             // const inputArray = Array.from(inputQuantity)
             // const total = inputArray.reduce((total, current) => {
@@ -90,10 +102,9 @@ function initQuantityListener () {
             // }, 0)
             // totalQuantity = total
 
-
             let cartProduct = {
-                id : itemSelect.dataset.id,
-                color : itemSelect.dataset.color,
+                id : item.dataset.id,
+                color : item.dataset.color,
                 quantity : +e.target.value 
                 // parseInt(e.target.closest(".itemQuantity").value)
             }
@@ -103,10 +114,10 @@ function initQuantityListener () {
             if(index !== -1) {
                 tab[index].quantity = cartProduct.quantity
                 countQuantityProducts (tab)
-
+                
                 if(tab[index].quantity < 1) {
 
-                    itemSelect.remove()
+                    item.remove()
                     tab.splice(index, 1)
                 } 
                 
@@ -131,10 +142,10 @@ function countQuantityProducts (tab) {
 
 function costProduct (match, product) {
 
-    console.log();
-
-    totalPrice.innerText = match.price 
-
+    
+    return match.price * product.quantity
+    
+    
 }
 
 
@@ -144,22 +155,24 @@ function deleteCards () {
     // console.log(deleteItem);
     deleteItem.forEach(button => {
         button.addEventListener("click", (e) => {
+            const item = e.target.closest(".cart__item")
             button.closest('.cart__item').remove()
             // console.log(e.target.closest(".cart__item").dataset.id);
 
             let cartProduct = {
-                id : e.target.closest(".cart__item").dataset.id,
-                color : e.target.closest(".cart__item").dataset.color
+                id : item.dataset.id,
+                color :item.dataset.color
 
             }
             // console.log(cartProduct);
 
             const tab = JSON.parse(localStorage.getItem('cart')) || []
-            console.log(tab);
+            // console.log(tab);
             const index = tab.findIndex(element => element.id === cartProduct.id && element.color === cartProduct.color)
             if(index !== -1) {
                 tab.splice(index, 1)
                 localStorage.setItem('cart', JSON.stringify(tab))
+                countQuantityProducts (tab)
             }
         })
     })

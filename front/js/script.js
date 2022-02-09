@@ -25,31 +25,30 @@ function renderProductsToHTML (products) {
 
 
     for(let i = 0; i < products.length; i++) {
-            
+            let item = products[i]
 
-        // J'ai pris les elements que je veux viser dans mon DOM (HTML INTO DOM) avec un .innerHTML
+        
+            let productLink = document.createElement("a");
+            items.appendChild(productLink);
+            productLink.href = `product.html?id=${item._id}`;
 
+            let productArticle = document.createElement("article");
+            productLink.appendChild(productArticle);
 
-        items.innerHTML +=
-        `<a href="./product.html?id=${products[i]._id}">
-            <article>
-                <img src="${products[i].imageUrl}" alt="${products[i].altTxt}">
-                <h3 class="productName">${products[i].name}</h3>
-                <p class="productDescription">${products[i].description}</p>
-            </article>
-        </a>`
-        // const newDiv = document.createElement("div");
-        // newDiv.innerHTML = 
-        // `<a href="./product.html?id=${products[i]._id}">
-        //     <article>
-        //             <img src="${products[i].imageUrl}" alt="${products[i].altTxt}">
-        //             <h3 class="productName">${products[i].name}</h3>
-        //             <p class="productDescription">${products[i].description}</p>
-        //     </article>
-        // </a>`
-        // items.appendChild(newDiv);
+            let productImg = document.createElement("img");
+            productArticle.appendChild(productImg);
+            productImg.src = item.imageUrl;
+            productImg.alt = item.altTxt
 
-            // console.log(data[i]);
+            let productName = document.createElement("h3");
+            productArticle.appendChild(productName);
+            productName.classList.add("productName");
+            productName.textContent = item.name
+
+            let productDescription = document.createElement("p");
+            productArticle.appendChild(productDescription);
+            productDescription.classList.add("productDescription");
+            productDescription.textContent = item.description
     }
 
 }
@@ -68,7 +67,3 @@ async function displayProducts () {
 
 displayProducts()
 
-
-// document.createElement('tr)
-// const.innerHtml = <td>...</td>
-// const.appendChild()

@@ -6,7 +6,7 @@
 
 // une fonction qui va calculer le prix total et une autre la quantité
 
-
+// total = de la quantite * total = des prix 
 
 
 
@@ -24,31 +24,15 @@ function getProducts () {
     .then((products) => {
 
         const tab = JSON.parse(localStorage.getItem('cart'))
-        let total = 0
         tab.forEach(product => {
             let match = Object.values(products).find(element => element._id === product.id)
             getCard(match, product)
-            total += costProduct(match, product)
-            initQuantityListener (match, product)
-
         })
-        totalItems = total
-        console.log(totalItems);
-        
-        initQuantityListener ()
-        deleteCards()
-        countQuantityProducts (tab)
-        // function getTotal() {
-        //     const tab = JSON.parse(localStorage.getItem('cart'))
-        //     let total = 0
-        //     tab.forEach(product => {
-        //         let match = Object.values(products).find(element => element._id === product.id)
-        //         total += match.price * product.quantity
-        //     })
-        //     return total
-        // }
-        // getTotal()
 
+        initQuantityListener(products)
+        countQuantityProducts(tab)
+        getTotalProducts(products)
+        deleteCards(products)
     })
     
     .catch(error => {
@@ -66,7 +50,7 @@ getProducts()
 //     })
 
 //     .then((product) => {
-//         return product;
+//         return product; 
 //     })
 
 //     .catch(error => {
@@ -79,64 +63,46 @@ getProducts()
 
 
 //     const tab = JSON.parse(localStorage.getItem('cart'))
-//     let total = 0
 //     for(const product of tab) {
-//         // console.log(product);
 //         let match = await getProduct(product.id) 
-//         // console.log(match);
 //         getCard(match, product)
-//         total += costProduct(match, product)
-//         // console.log(total);
-//         // costProduct(match, product)
 //     }
-//     totalItems = total
-    
-//     console.log(totalItems);
-//     initQuantityListener ()
-//     deleteCards()
+//     getTotalProducts(products)
+//     initQuantityListener (products)
 //     countQuantityProducts (tab)
+//     deleteCards()
 // } 
 
 // displayProducts()
 
 
-function initQuantityListener (match, product) {
+function initQuantityListener (products) {
 
     const inputQuantity = document.querySelectorAll('.itemQuantity')
-    // console.log(inputQuantity);
-    // console.log(Array.from(inputQuantity));
+
     inputQuantity.forEach(input => {
         input.addEventListener('change', (e) => {
             const item = e.target.closest(".cart__item")
-
-            // const inputArray = Array.from(inputQuantity)
-            // const total = inputArray.reduce((total, current) => {
-            //     return total += parseInt(current.value)
-            // }, 0)
-            // totalQuantity = total
 
             let cartProduct = {
                 id : item.dataset.id,
                 color : item.dataset.color,
                 quantity : +e.target.value 
-                // parseInt(e.target.closest(".itemQuantity").value)
             }
-            // console.log(cartProduct);
             const tab = JSON.parse(localStorage.getItem('cart')) || []
             const index = tab.findIndex(element => element.id === cartProduct.id && element.color === cartProduct.color)
             if(index !== -1) {
-                tab[index].quantity = cartProduct.quantity
-                countQuantityProducts (tab)
-                totalPrice.innerText = match.price * tab[index].quantity
-
-                if(tab[index].quantity < 1) {
-
-                    item.remove()
-                    tab.splice(index, 1)
-                } 
+                tab[index].quantity = cartProduct.quantity;
                 
-                localStorage.setItem('cart', JSON.stringify(tab))
+                if(tab[index].quantity < 1) {
+                    item.remove();
+                    tab.splice(index, 1);
+                } 
             } 
+            
+            localStorage.setItem('cart', JSON.stringify(tab));
+            countQuantityProducts (tab);
+            getTotalProducts(products)
 
             
         })
@@ -145,51 +111,42 @@ function initQuantityListener (match, product) {
 }
 
 function countQuantityProducts (tab) {
-
-
-    const reducer = (accumulator, currentValue) => accumulator + currentValue.quantity;
-    
-    totalQuantity.innerText = tab.reduce(reducer, 0);
-    
-
-}
-
-function costProduct (match, product) {
-    
-    
-    return match.price * product.quantity
-    
-    
+    const reducer = (accumulator, currentValue) => accumulator + currentValue.quantity
+    totalQuantity.textContent = tab.reduce(reducer, 0)
 }
 
 
+function getTotalProducts(products) {
+        const tab = JSON.parse(localStorage.getItem('cart'));
+        let total = 0;
+        tab.forEach(product => {
+                let match = Object.values(products).find(element => element._id === product.id);
+                total += match.price * product.quantity;
+        })
+            totalPrice.textContent = total;
+}
 
 
-
-function deleteCards () {
+function deleteCards (products) {
 
     const deleteItem = document.querySelectorAll('.deleteItem')
     // console.log(deleteItem);
     deleteItem.forEach(button => {
         button.addEventListener("click", (e) => {
-            const item = e.target.closest(".cart__item")
-            button.closest('.cart__item').remove()
-            // console.log(e.target.closest(".cart__item").dataset.id);
-
+            const item = e.target.closest(".cart__item");
+            button.closest('.cart__item').remove();
+            
             let cartProduct = {
                 id : item.dataset.id,
                 color :item.dataset.color
-
             }
-            // console.log(cartProduct);
-
-            const tab = JSON.parse(localStorage.getItem('cart')) || []
-            // console.log(tab);
-            const index = tab.findIndex(element => element.id === cartProduct.id && element.color === cartProduct.color)
+            const tab = JSON.parse(localStorage.getItem('cart')) || [];
+            const index = tab.findIndex(element => element.id === cartProduct.id && element.color === cartProduct.color);
             if(index !== -1) {
-                tab.splice(index, 1)
+                tab.splice(index, 1);
                 localStorage.setItem('cart', JSON.stringify(tab))
-                countQuantityProducts (tab)
+                countQuantityProducts (tab);
+                getTotalProducts(products)
             }
         })
     })
@@ -198,33 +155,71 @@ function deleteCards () {
 
 function getCard(match, tab) {
     
-    cardItems.innerHTML += 
-        `<article class="cart__item" data-id="${tab.id}" data-color="${tab.color}">
-        <div class="cart__item__img">
-            <img src="${match.imageUrl}" alt="${match.altTxt}">
-        </div>
-        <div class="cart__item__content">
-            <div class="cart__item__content__description">
-                <h2>${match.name}</h2>
-                <p>${tab.color}</p>
-                <p>${match.price} €</p>
-        </div>
-        <div class="cart__item__content__settings">
-            <div class="cart__item__content__settings__quantity">
-            <p>Qté : </p>
-            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${tab.quantity}">
-        </div>
-        <div class="cart__item__content__settings__delete">
-            <p class="deleteItem">Supprimer</p>
-        </div>
-        </div>
-        </div>
-    </article>`    
+    let productArticle = document.createElement("article");
+    cardItems.appendChild(productArticle);
+    productArticle.className = "cart__item";
+    productArticle.setAttribute('data-id', tab.id);
+    productArticle.setAttribute('data-color', tab.color)
+
+    let productDivImg = document.createElement('div');
+    productArticle.appendChild(productDivImg);
+    productDivImg.className = "cart__item__img";
+
+    let productImg = document.createElement("img");
+    productDivImg.appendChild(productImg);
+    productImg.src = match.imageUrl;
+    productImg.alt = match.altTxt
+
+    let productDivContent = document.createElement("div")
+    productArticle.appendChild(productDivContent);
+    productDivContent.className = "cart__item__content";
+
+    let productDivDescription = document.createElement("div");
+    productDivContent.appendChild(productDivDescription);
+    productDivDescription.className = "cart__item__content__description";
+
+    let productName = document.createElement('h2');
+    productDivDescription.appendChild(productName);
+    productName.textContent = match.name
+
+    let productColor = document.createElement("p");
+    productDivDescription.appendChild(productColor);
+    productColor.textContent = tab.color;
+
+    let productPrice = document.createElement("p");
+    productDivDescription.appendChild(productPrice);
+    productPrice.textContent = match.price + "€";
+
+    let productDivSettings = document.createElement("div");
+    productDivContent.appendChild(productDivSettings);
+    productDivSettings.className = "cart__item__content__settings";
+
+    let productDivQuantity = document.createElement("div");
+    productDivSettings.appendChild(productDivQuantity);
+    productDivQuantity.className = "cart__item__content__settings__quantity";
+
+    let productQuantity = document.createElement("p");
+    productDivQuantity.appendChild(productQuantity);
+    productQuantity.textContent = "Qté : "
+
+    let productItemQuantity = document.createElement("input");
+    productDivQuantity.appendChild(productItemQuantity);
+    productItemQuantity.value = tab.quantity;
+    productItemQuantity.className = "itemQuantity";
+    productItemQuantity.setAttribute("type", "number");
+    productItemQuantity.setAttribute("name", "itemQuantity");
+    productItemQuantity.setAttribute("min", "1");
+    productItemQuantity.setAttribute("max", "100");
+
+    let productDivDelete = document.createElement("div");
+    productDivSettings.appendChild(productDivDelete);
+    productDivDelete.className = "cart__item__content__settings__delete";
+
+    let productDelete = document.createElement("p")
+    productDivDelete.appendChild(productDelete);
+    productDelete.className = "deleteItem";
+    productDelete.textContent = "Supprimer"
 }
 
 
-
-
-// const reducer = (accumulator, currentValue) => accumulator + currentValue;
-// const priceTotale = tabPrice.reduce(reducer, 0)
-// console.log(priceTotale);
+// partie contact 

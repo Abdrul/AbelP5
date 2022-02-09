@@ -22,35 +22,34 @@ const getProduct = () => {
 }
 
 
-const renderProductToHtml = (product) => {
-    const itemImg = document.querySelector('.item__img');
-    const title = document.getElementById('title');
-    const price = document.getElementById('price');
-    const description = document.getElementById('description');
-    const select = document.getElementById('colors');
-
-    title.innerText = product.name;
-
-    price.innerText = formatter.format(product.price);
+function renderProductToHtml (product) {
 
 
-    description.innerText = product.description;
+    let productImg = document.createElement("img");
+    document.querySelector('.item__img').appendChild(productImg);
+    console.log(productImg);
+    productImg.src = product.imageUrl;
+    productImg.alt = product.altTxt;
 
-    itemImg.innerHTML =  `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
-    
+    let productName = document.getElementById("title");
+    productName.textContent = product.name;
+
+    let productPrice = document.getElementById("price");
+    productPrice.textContent = product.price;
+
+    let productDescription = document.getElementById("description");
+    productDescription.textContent = product.description;
+
+
     product.colors.forEach(color => {
-        select.innerHTML +=`<option value="${color}">${color}</option>`  
+        let productColor = document.createElement("option");
+        document.querySelector('#colors').appendChild(productColor);
+        productColor.value = color;
+        productColor.textContent = color
     })
-    // select.innerHTML += product.colors.map(color => `<option value="${color}">${color}</option>`).join();
-
 }
 
 
-const formatter = new Intl.NumberFormat('fr-FR', {
-    currency: 'EUR',
-    minimumFractionDigits : 2
-
-})
 
 async function displayProduct () {
 
@@ -70,13 +69,6 @@ function addToCart () {
         const quantity = document.getElementById('quantity');
         const select = document.getElementById('colors');
 
-        // let objStock = JSON.stringify(tab);
-        // localStorage.setItem("panier", objStock);
-        // console.log(select.value);
-        // console.log(quantity.value);
-        // tab.push(select.value, quantity.value, id)
-        // console.log(tab);
-        // saveBasket(tab)
         let cart = {
             color : select.value,
             quantity : parseInt(quantity.value),
@@ -89,26 +81,14 @@ function addToCart () {
             if(index === -1) {
                 tab.push(cart)
             } else {
-                // tab[index].quantity = tab[index].quantity + cart.quantity;
                 tab[index].quantity += cart.quantity
             }
 
-        } else {
-            console.log(false);
         }
         
-        console.log(index);
-
-        
-        
         localStorage.setItem('cart', JSON.stringify(tab))
-    
-    
     })
 }
 
 addToCart()
 
-// Si quantité > 0
-// Si quantité <=100
-// Si couleur !== ""

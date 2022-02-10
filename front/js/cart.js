@@ -1,15 +1,3 @@
-// Une fonction qui va convertir le panier en html for chercher 
-
-
-// une fonction qui affiche le panier et elle appelle les fonctions de calcul
-
-
-// une fonction qui va calculer le prix total et une autre la quantité
-
-// total = de la quantite * total = des prix 
-
-
-
 
 const cardItems = document.getElementById('cart__items');
 const totalPrice = document.getElementById('totalPrice');
@@ -23,7 +11,7 @@ function getProducts () {
 
     .then((products) => {
 
-        const tab = JSON.parse(localStorage.getItem('cart'))
+        const tab = JSON.parse(localStorage.getItem('cart')) || []
         tab.forEach(product => {
             let match = Object.values(products).find(element => element._id === product.id)
             getCard(match, product)
@@ -33,6 +21,7 @@ function getProducts () {
         countQuantityProducts(tab)
         getTotalProducts(products)
         deleteCards(products)
+        
     })
     
     .catch(error => {
@@ -130,7 +119,6 @@ function getTotalProducts(products) {
 function deleteCards (products) {
 
     const deleteItem = document.querySelectorAll('.deleteItem')
-    // console.log(deleteItem);
     deleteItem.forEach(button => {
         button.addEventListener("click", (e) => {
             const item = e.target.closest(".cart__item");
@@ -223,3 +211,113 @@ function getCard(match, tab) {
 
 
 // partie contact 
+
+const inputFirstName = document.querySelector('.cart__order__form__question:nth-child(1) input');
+const inputLastName = document.querySelector('.cart__order__form__question:nth-child(2) input');
+const inputAdress= document.querySelector('.cart__order__form__question:nth-child(3) input');
+const inputCity = document.querySelector('.cart__order__form__question:nth-child(4) input');
+const inputMail = document.querySelector('.cart__order__form__question:nth-child(5) input');
+
+let firstName, lastName, address, city, email;
+
+
+inputFirstName.addEventListener('input', (e) => {
+
+    if(!e.target.value.match(/^[a-zA-Z\-]+$/)) {
+        document.getElementById("firstNameErrorMsg").textContent = "Votre Prénom ne doit pas contenir de chiffre ou de caractère spéciaux";
+        firstName = null
+    } else {
+        document.getElementById("firstNameErrorMsg").textContent = "";
+        firstName = e.target.value
+    }
+})
+
+inputLastName.addEventListener('input', (e) => {
+
+    if(!e.target.value.match(/^[a-zA-Z\-]+$/)) {
+        document.getElementById("lastNameErrorMsg").textContent = "Votre Nom ne doit pas contenir de chiffre ou de caractère spéciaux";
+        lastName = null
+    } else {
+        document.getElementById("lastNameErrorMsg").textContent = "";
+        lastName = e.target.value
+    }
+})
+
+inputAdress.addEventListener('input', (e) => {
+
+    if(!e.target.value.match(/^[a-zA-Z0-9\s,.'-]{3,}$/)) {
+        document.getElementById("addressErrorMsg").textContent = "Votre adresse semble incorrect";
+        address = null
+    } else {
+        document.getElementById("addressErrorMsg").textContent = "" ;
+        address = e.target.value
+    }
+})
+
+inputCity.addEventListener('input', (e) => {
+
+    if(!e.target.value.match(/^[a-zA-Z\-]+$/)) {
+        document.getElementById("cityErrorMsg").textContent = "Votre Ville ne peut pas contenir de caractère spéciaux ou de chiffres";
+        city = null
+    } else {
+        document.getElementById("cityErrorMsg").textContent = "";
+        city = e.target.value
+    }
+})
+
+inputMail.addEventListener('input', (e) => {
+
+    if(!e.target.value.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
+        document.getElementById("emailErrorMsg").textContent = "Votre Email est incorrect";
+        email = null
+    } else {
+        document.getElementById("emailErrorMsg").textContent = "";
+        email = e.target.value
+    }
+})
+
+const form = document.querySelector('.cart__order__form');
+
+
+function submitForm () {
+
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if(firstName && lastName && address && city && email) {
+            pushToBack = {
+                firstName : firstName,
+                lastName : lastName,
+                address : address,
+                city : city,
+                email : email
+            }
+            console.log(pushToBack);
+            
+            let commandeOfCart = []
+            
+            const tab = JSON.parse(localStorage.getItem('cart')) || []
+            
+            tab.forEach(product => {          
+                commandeOfCart.push(product.id)
+                console.log(commandeOfCart);
+            })
+            localStorage.setItem('cart', JSON.stringify(tab));
+            
+            const promise1 = fetch("http://localhost:3000/api/products/order", {
+                method : "POST",
+                body : JSON.stringify(pushToBack, commandeOfCart),
+                headers : {
+                    'Accept': 'application/json', 
+                    "Content-Type": "application/json" 
+                },
+            })
+            console.log(promise1);
+        }
+
+    })
+
+}
+
+submitForm ()

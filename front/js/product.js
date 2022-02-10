@@ -27,7 +27,6 @@ function renderProductToHtml (product) {
 
     let productImg = document.createElement("img");
     document.querySelector('.item__img').appendChild(productImg);
-    console.log(productImg);
     productImg.src = product.imageUrl;
     productImg.alt = product.altTxt;
 
@@ -74,6 +73,7 @@ function addToCart () {
             quantity : parseInt(quantity.value),
             id : id
         }
+        console.log(cart);
         const tab = JSON.parse(localStorage.getItem('cart')) || []
         console.log(tab);
         const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
@@ -84,9 +84,9 @@ function addToCart () {
                 tab[index].quantity += cart.quantity
             }
 
+            localStorage.setItem('cart', JSON.stringify(tab))
         }
         
-        localStorage.setItem('cart', JSON.stringify(tab))
     })
 }
 

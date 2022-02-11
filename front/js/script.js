@@ -27,7 +27,6 @@ function renderProductsToHTML (products) {
     for(let i = 0; i < products.length; i++) {
             let item = products[i]
 
-        
             let productLink = document.createElement("a");
             items.appendChild(productLink);
             productLink.href = `product.html?id=${item._id}`;
@@ -59,7 +58,7 @@ async function displayProducts () {
     if(products.length > 0) {
         renderProductsToHTML(products);
     } else {
-        items.innerHTML = "salut";
+        items.innerHTML = "Erreur le server ne s'est pas lancé";
     }
 
 }

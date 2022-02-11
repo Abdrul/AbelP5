@@ -30,39 +30,6 @@ function getProducts () {
 }
 getProducts()   
 
-// function getProduct (id) {
-
-//     return fetch(`http://localhost:3000/api/products/${id}`)
-
-//     .then((reponse) => {
-//         return reponse.json()
-//     })
-
-//     .then((product) => {
-//         return product; 
-//     })
-
-//     .catch(error => {
-//         return [];
-//     });
-// }
-
-
-// async function displayProducts ()  {
-
-
-//     const tab = JSON.parse(localStorage.getItem('cart'))
-//     for(const product of tab) {
-//         let match = await getProduct(product.id) 
-//         getCard(match, product)
-//     }
-//     getTotalProducts(products)
-//     initQuantityListener (products)
-//     countQuantityProducts (tab)
-//     deleteCards()
-// } 
-
-// displayProducts()
 
 
 function initQuantityListener (products) {
@@ -211,6 +178,7 @@ function getCard(match, tab) {
 
 
 // partie contact 
+function contact () {
 
 const inputFirstName = document.querySelector('.cart__order__form__question:nth-child(1) input');
 const inputLastName = document.querySelector('.cart__order__form__question:nth-child(2) input');
@@ -220,10 +188,12 @@ const inputMail = document.querySelector('.cart__order__form__question:nth-child
 
 let firstName, lastName, address, city, email;
 
+const nameRegex = /^[a-zA-Z\-]+$/;
+
 
 inputFirstName.addEventListener('input', (e) => {
 
-    if(!e.target.value.match(/^[a-zA-Z\-]+$/)) {
+    if(!e.target.value.match(nameRegex)) {
         document.getElementById("firstNameErrorMsg").textContent = "Votre Prénom ne doit pas contenir de chiffre ou de caractère spéciaux";
         firstName = null
     } else {
@@ -234,7 +204,7 @@ inputFirstName.addEventListener('input', (e) => {
 
 inputLastName.addEventListener('input', (e) => {
 
-    if(!e.target.value.match(/^[a-zA-Z\-]+$/)) {
+    if(!e.target.value.match(nameRegex)) {
         document.getElementById("lastNameErrorMsg").textContent = "Votre Nom ne doit pas contenir de chiffre ou de caractère spéciaux";
         lastName = null
     } else {
@@ -245,7 +215,7 @@ inputLastName.addEventListener('input', (e) => {
 
 inputAdress.addEventListener('input', (e) => {
 
-    if(!e.target.value.match(/^[a-zA-Z0-9\s,.'-]{3,}$/)) {
+    if(!e.target.value.match(/^[a-zA-Z0-9\s,'-]*$/)) {
         document.getElementById("addressErrorMsg").textContent = "Votre adresse semble incorrect";
         address = null
     } else {
@@ -256,7 +226,7 @@ inputAdress.addEventListener('input', (e) => {
 
 inputCity.addEventListener('input', (e) => {
 
-    if(!e.target.value.match(/^[a-zA-Z\-]+$/)) {
+    if(!e.target.value.match(nameRegex)) {
         document.getElementById("cityErrorMsg").textContent = "Votre Ville ne peut pas contenir de caractère spéciaux ou de chiffres";
         city = null
     } else {
@@ -267,7 +237,7 @@ inputCity.addEventListener('input', (e) => {
 
 inputMail.addEventListener('input', (e) => {
 
-    if(!e.target.value.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
+    if(!e.target.value.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
         document.getElementById("emailErrorMsg").textContent = "Votre Email est incorrect";
         email = null
     } else {
@@ -275,49 +245,51 @@ inputMail.addEventListener('input', (e) => {
         email = e.target.value
     }
 })
+}
+contact()
 
 const form = document.querySelector('.cart__order__form');
 
-
 function submitForm () {
 
-    
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
         if(firstName && lastName && address && city && email) {
-            pushToBack = {
-                firstName : firstName,
-                lastName : lastName,
-                address : address,
-                city : city,
-                email : email
+            const pushToBack = {
+                contact : {
+                    firstName : firstName,
+                    lastName : lastName,
+                    address : address,
+                    city : city,
+                    email : email
+                }
             }
-            console.log(pushToBack);
-            
             let commandeOfCart = []
             
             const tab = JSON.parse(localStorage.getItem('cart')) || []
+            if(tab.length === 0) return false; 
             
             tab.forEach(product => {          
                 commandeOfCart.push(product.id)
                 console.log(commandeOfCart);
             })
             localStorage.setItem('cart', JSON.stringify(tab));
+            pushToBack.products = commandeOfCart;
+            console.log(pushToBack);
             
-            const promise1 = fetch("http://localhost:3000/api/products/order", {
+            fetch("http://localhost:3000/api/products/order", {
                 method : "POST",
-                body : JSON.stringify(pushToBack, commandeOfCart),
+                body : JSON.stringify(pushToBack),
                 headers : {
-                    'Accept': 'application/json', 
                     "Content-Type": "application/json" 
                 },
             })
-            console.log(promise1);
+            .then(response => response.json())
+            .then(data => {
+                localStorage.clear('cart');
+                window.location.href = 'confirmation.html?orderId='+data.orderId;
+            })
         }
-
     })
-
 }
-
-submitForm ()
+submitForm()

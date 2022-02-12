@@ -1,7 +1,7 @@
 let params = new URL(document.location).searchParams;
 let id = params.get('id') 
 
-
+// Function qui va me recuperer les données des objects de l'api en fonction de l'id 
 
 const getProduct = () => {
 
@@ -21,6 +21,7 @@ const getProduct = () => {
     });
 }
 
+// Function qui en bouclant les produits grace a l'api va m'afficher les produits de facon dynamique
 
 function renderProductToHtml (product) {
 
@@ -48,7 +49,7 @@ function renderProductToHtml (product) {
     })
 }
 
-
+// function qui va faire apparaitre les produits 
 
 async function displayProduct () {
 
@@ -57,7 +58,11 @@ async function displayProduct () {
 }
 displayProduct()
 
-
+/*
+Function qui me permet de rajouter le produit sur la page dans le localStorage 
+en fonction de son id et de sa couleur,
+On y met (LS) l'id la quantite et la couleur
+*/
 
 function addToCart () {
 
@@ -73,9 +78,8 @@ function addToCart () {
             quantity : parseInt(quantity.value),
             id : id
         }
-        console.log(cart);
+
         const tab = JSON.parse(localStorage.getItem('cart')) || []
-        console.log(tab);
         const index = tab.findIndex(element => element.id === cart.id && element.color === cart.color)
         if(quantity.value > 0 && quantity.value <100 && select.value !== "") { 
             if(index === -1) {
@@ -83,7 +87,6 @@ function addToCart () {
             } else {
                 tab[index].quantity += cart.quantity
             }
-
             localStorage.setItem('cart', JSON.stringify(tab))
         }
         

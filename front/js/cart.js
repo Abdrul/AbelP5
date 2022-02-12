@@ -1,8 +1,8 @@
 
-const cardItems = document.getElementById('cart__items');
-const totalPrice = document.getElementById('totalPrice');
-const totalQuantity = document.getElementById('totalQuantity');
-
+/*
+Function qui recupere les données de l'api en fonction
+de l'id et la couleur stocke dans mon localStorage
+*/
 function getProducts () {
 
     fetch(`http://localhost:3000/api/products`)
@@ -30,7 +30,11 @@ function getProducts () {
 }
 getProducts()   
 
-
+/*
+Function qui permet a l'evenement change sur les inputs 
+de modifier la quantite des produits et des prix en fonction de la nouvelle quantite
+et dans le LS aussi 
+*/
 
 function initQuantityListener (products) {
 
@@ -66,13 +70,20 @@ function initQuantityListener (products) {
     })
 }
 
+// Function de calcul de la quantite total sur la page panier
+
 function countQuantityProducts (tab) {
+    const totalQuantity = document.getElementById('totalQuantity');
+
     const reducer = (accumulator, currentValue) => accumulator + currentValue.quantity
     totalQuantity.textContent = tab.reduce(reducer, 0)
 }
 
+// Function de calcul du prix total par rapport a la quantite total et du prix des produits
 
 function getTotalProducts(products) {
+        const totalPrice = document.getElementById('totalPrice');
+
         const tab = JSON.parse(localStorage.getItem('cart'));
         let total = 0;
         tab.forEach(product => {
@@ -82,6 +93,7 @@ function getTotalProducts(products) {
             totalPrice.textContent = total;
 }
 
+// Function sur l'evenement pour supprimer les produits du panier y compris dans le LS
 
 function deleteCards (products) {
 
@@ -107,8 +119,10 @@ function deleteCards (products) {
     })
 }
 
+// Function qui permet de recuperer les produits stockes dans le LS et les afficher  
 
 function getCard(match, tab) {
+    const cardItems = document.getElementById('cart__items');
     
     let productArticle = document.createElement("article");
     cardItems.appendChild(productArticle);
@@ -178,6 +192,9 @@ function getCard(match, tab) {
 
 
 // partie contact 
+
+// Function du formulaire, qui permet de recuperer les données du client pour son bon de commande
+
 function contact () {
 
 const inputFirstName = document.querySelector('.cart__order__form__question:nth-child(1) input');
@@ -246,14 +263,17 @@ inputMail.addEventListener('input', (e) => {
     }
 })
 }
-contact()
+
+contact ()
 
 const form = document.querySelector('.cart__order__form');
 
+// Function d'envoie du form si les données en etait remplie et d'afficher le bon de commande sur une nouvelle page
+
 function submitForm () {
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    form.addEventListener('submit', () => {
+        contact ()
         if(firstName && lastName && address && city && email) {
             const pushToBack = {
                 contact : {

@@ -3,6 +3,8 @@ const items = document.getElementById('items')
 
 // Part of Index 
 
+// Function qui récupere les données dans l'api
+
 function getProducts () {
 
     return fetch(`http://localhost:3000/api/products`)
@@ -21,12 +23,15 @@ function getProducts () {
 
 }
 
+// Function qui en bouclant les produits grace a l'api va m'afficher les produits de facon dynamique
+
 function renderProductsToHTML (products) {
 
 
     for(let i = 0; i < products.length; i++) {
             let item = products[i]
 
+        
             let productLink = document.createElement("a");
             items.appendChild(productLink);
             productLink.href = `product.html?id=${item._id}`;
@@ -52,6 +57,8 @@ function renderProductsToHTML (products) {
 
 }
 
+// function qui va faire apparaitre les produits 
+
 async function displayProducts () {
 
     const products = await getProducts();
@@ -62,7 +69,5 @@ async function displayProducts () {
     }
 
 }
-
-
 displayProducts()
 
